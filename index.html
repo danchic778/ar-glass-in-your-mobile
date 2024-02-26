@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Подключение к основной камере телефона</title>
+    <title>VR-устройство с двумя проекциями видео</title>
 </head>
 <body>
-    <h1>Просмотр видео с основной камеры</h1>
-    <video id="video" width="320" height="240" controls></video>
+    <div id="container">
+        <div id="left-video" style="width: 50%; height: 100%; float: left;"></div>
+        <div id="right-video" style="width: 50%; height: 100%; float: right;"></div>
+    </div>
 
     <script>
         // Запрос разрешения на доступ к камере
@@ -18,8 +20,29 @@
             audio: false
         }).then(function(stream) {
             // Получение видеопотока
-            var video = document.getElementById('video');
-            video.srcObject = stream;
+            var leftVideo = document.getElementById('left-video');
+            var rightVideo = document.getElementById('right-video');
+
+            // Создаем два видеоэлемента
+            var leftVideoElement = document.createElement('video');
+            var rightVideoElement = document.createElement('video');
+
+            // Устанавливаем видеопоток для каждого видеоэлемента
+            leftVideoElement.srcObject = stream;
+            rightVideoElement.srcObject = stream;
+
+            // Добавляем видеоэлементы в контейнеры
+            leftVideo.appendChild(leftVideoElement);
+            rightVideo.appendChild(rightVideoElement);
+
+            // Настраиваем видеоэлементы
+            leftVideoElement.style.width = "100%";
+            leftVideoElement.style.height = "100%";
+            leftVideoElement.controls = true;
+
+            rightVideoElement.style.width = "100%";
+            rightVideoElement.style.height = "100%";
+            rightVideoElement.controls = true;
         }).catch(function(error) {
             // Обработка ошибки
             console.log(error.message);
