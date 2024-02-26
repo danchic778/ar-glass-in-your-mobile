@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Подключение к основной камере телефона</title>
+</head>
+<body>
+    <h1>Просмотр видео с основной камеры</h1>
+    <video id="video" width="320" height="240" controls></video>
+
+    <script>
+        // Запрос разрешения на доступ к камере
+        navigator.mediaDevices.getUserMedia({
+            video: true,
+            audio: false
+        }).then(function(stream) {
+            // Получение видеопотока
+            var video = document.getElementById('video');
+            video.srcObject = stream;
+        }).catch(function(error) {
+            // Обработка ошибки
+            console.log(error.message);
+            if (error.message === 'Permission denied') {
+                alert('Вы не предоставили разрешение на доступ к камере.');
+            }
+        });
+    </script>
+</body>
+</html>
