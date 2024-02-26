@@ -12,7 +12,9 @@
     <script>
         // Запрос разрешения на доступ к камере
         navigator.mediaDevices.getUserMedia({
-            video: true,
+            video: {
+                facingMode: "environment" // "user" - фронтальная, "environment" - основная
+            },
             audio: false
         }).then(function(stream) {
             // Получение видеопотока
