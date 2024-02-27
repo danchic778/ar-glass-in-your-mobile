@@ -65,6 +65,21 @@
       // Запускаем видео
       leftVideo.play();
       rightVideo.play();
+
+      // Переходим в полноэкранный режим при запуске на мобильном устройстве
+      if (/Mobi|Android/i.test(navigator.userAgent)) {
+        document.addEventListener("DOMContentLoaded", function() {
+          if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen();
+          } else if (document.documentElement.webkitRequestFullscreen) {
+            document.documentElement.webkitRequestFullscreen();
+          } else if (document.documentElement.mozRequestFullScreen) {
+            document.documentElement.mozRequestFullScreen();
+          } else if (document.documentElement.msRequestFullscreen) {
+            document.documentElement.msRequestFullscreen();
+          }
+        });
+      }
     }).catch(function(error) {
       // Обработка ошибки
       console.log(error.message);
