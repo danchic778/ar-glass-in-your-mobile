@@ -23,7 +23,6 @@
     #left-video video, #right-video video {
       width: 100%; /* Видео должно быть шириной 100% родителя */
       height: calc(100% + 30px); /* Увеличиваем видео на 30 пикселей вниз */
-      transform: translateY(-30px); /* Смещаем видео на 30 пикселей вверх */
     }
     #left-video img, #right-video img {
       position: absolute; /* Абсолютное позиционирование внутри родителя */
@@ -39,11 +38,11 @@
   <div id="container">
     <div id="left-video">
       <video autoplay muted></video>
-      <img src="img1.png" alt="Overlay Image">
+      <img src="img.png" alt="Overlay Image">
     </div>
     <div id="right-video">
       <video autoplay muted></video>
-      <img src="img1.png" alt="Overlay Image">
+      <img src="img.png" alt="Overlay Image">
     </div>
   </div>
 
