@@ -48,8 +48,8 @@
 
       // Создаем canvas-элемент для отображения изображения
       var canvas = document.createElement('canvas');
-      canvas.width = leftVideoElement.width;
-      canvas.height = leftVideoElement.height;
+      canvas.width = leftVideoElement.width / 2;
+      canvas.height = leftVideoElement.height / 2;
 
       // Создаем контекст рисования
       var ctx = canvas.getContext('2d');
@@ -77,6 +77,8 @@
 
       // Позиционируем объект видео
       videoMesh.position.z = 0.1;
+      videoMesh.position.x = 0;
+      videoMesh.position.y = 0;
 
       // Анимация
       function animate() {
