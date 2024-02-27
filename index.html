@@ -1,55 +1,55 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VR-устройство с двумя проекциями видео</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VR-устройство с двумя проекциями видео</title>
 </head>
 <body>
-  <div id="container" style="margin: 0;">
-    <div id="left-video" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0;"></div>
-    <div id="right-video" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0;"></div>
-  </div>
+    <div id="container">
+        <div id="left-video" style="width: 50%; height: 100%; float: left;"></div>
+        <div id="right-video" style="width: 50%; height: 100%; float: right;"></div>
+    </div>
 
-  <script>
-    // Запрос разрешения на доступ к камере
-    navigator.mediaDevices.getUserMedia({
-      video: {
-        facingMode: "environment" // "user" - фронтальная, "environment" - основная
-      },
-      audio: false
-    }).then(function(stream) {
-      // Получение видеопотока
-      var leftVideo = document.getElementById('left-video');
-      var rightVideo = document.getElementById('right-video');
+    <script>
+        // Запрос разрешения на доступ к камере
+        navigator.mediaDevices.getUserMedia({
+            video: {
+                facingMode: "environment" // "user" - фронтальная, "environment" - основная
+            },
+            audio: false
+        }).then(function(stream) {
+            // Получение видеопотока
+            var leftVideo = document.getElementById('left-video');
+            var rightVideo = document.getElementById('right-video');
 
-      // Создаем два видеоэлемента
-      var leftVideoElement = document.createElement('video');
-      var rightVideoElement = document.createElement('video');
+            // Создаем два видеоэлемента
+            var leftVideoElement = document.createElement('video');
+            var rightVideoElement = document.createElement('video');
 
-      // Устанавливаем видеопоток для каждого видеоэлемента
-      leftVideoElement.srcObject = stream;
-      rightVideoElement.srcObject = stream;
+            // Устанавливаем видеопоток для каждого видеоэлемента
+            leftVideoElement.srcObject = stream;
+            rightVideoElement.srcObject = stream;
 
-      // Добавляем видеоэлементы в контейнеры
-      leftVideo.appendChild(leftVideoElement);
-      rightVideo.appendChild(rightVideoElement);
+            // Добавляем видеоэлементы в контейнеры
+            leftVideo.appendChild(leftVideoElement);
+            rightVideo.appendChild(rightVideoElement);
 
-      // Настраиваем видеоэлементы
-      leftVideoElement.style.width = "50vw";
-      leftVideoElement.style.height = "100%";
-      leftVideoElement.controls = true;
+            // Настраиваем видеоэлементы
+            leftVideoElement.style.width = "100%";
+            leftVideoElement.style.height = "100%";
+            leftVideoElement.controls = true;
 
-      rightVideoElement.style.width = "50vw";
-      rightVideoElement.style.height = "100%";
-      rightVideoElement.controls = true;
-    }).catch(function(error) {
-      // Обработка ошибки
-      console.log(error.message);
-      if (error.message === 'Permission denied') {
-        alert('Вы не предоставили разрешение на доступ к камере.');
-      }
-    });
-  </script>
+            rightVideoElement.style.width = "100%";
+            rightVideoElement.style.height = "100%";
+            rightVideoElement.controls = true;
+        }).catch(function(error) {
+            // Обработка ошибки
+            console.log(error.message);
+            if (error.message === 'Permission denied') {
+                alert('Вы не предоставили разрешение на доступ к камере.');
+            }
+        });
+    </script>
 </body>
 </html>
