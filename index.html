@@ -1,55 +1,104 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VR-устройство с двумя проекциями видео</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VR-устройство с двумя проекциями видео</title>
 </head>
 <body>
-    <div id="container">
-        <div id="left-video" style="width: 50%; height: 100%; float: left;"></div>
-        <div id="right-video" style="width: 50%; height: 100%; float: right;"></div>
-    </div>
+  <div id="container">
+    <div id="left-video" style="width: 50%; height: 100%; float: left;"></div>
+    <div id="right-video" style="width: 50%; height: 100%; float: right;"></div>
+  </div>
 
-    <script>
-        // Запрос разрешения на доступ к камере
-        navigator.mediaDevices.getUserMedia({
-            video: {
-                facingMode: "environment" // "user" - фронтальная, "environment" - основная
-            },
-            audio: false
-        }).then(function(stream) {
-            // Получение видеопотока
-            var leftVideo = document.getElementById('left-video');
-            var rightVideo = document.getElementById('right-video');
+  <img id="image" src="img.png" style="display: none;">
 
-            // Создаем два видеоэлемента
-            var leftVideoElement = document.createElement('video');
-            var rightVideoElement = document.createElement('video');
+  <script>
+    // Запрос разрешения на доступ к камере
+    navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode: "environment" // "user" - фронтальная, "environment" - основная
+      },
+      audio: false
+    }).then(function(stream) {
+      // Получение видеопотока
+      var leftVideo = document.getElementById('left-video');
+      var rightVideo = document.getElementById('right-video');
 
-            // Устанавливаем видеопоток для каждого видеоэлемента
-            leftVideoElement.srcObject = stream;
-            rightVideoElement.srcObject = stream;
+      // Создаем два видеоэлемента
+      var leftVideoElement = document.createElement('video');
+      var rightVideoElement = document.createElement('video');
 
-            // Добавляем видеоэлементы в контейнеры
-            leftVideo.appendChild(leftVideoElement);
-            rightVideo.appendChild(rightVideoElement);
+      // Устанавливаем видеопоток для каждого видеоэлемента
+      leftVideoElement.srcObject = stream;
+      rightVideoElement.srcObject = stream;
 
-            // Настраиваем видеоэлементы
-            leftVideoElement.style.width = "100%";
-            leftVideoElement.style.height = "100%";
-            leftVideoElement.controls = true;
+      // Добавляем видеоэлементы в контейнеры
+      leftVideo.appendChild(leftVideoElement);
+      rightVideo.appendChild(rightVideoElement);
 
-            rightVideoElement.style.width = "100%";
-            rightVideoElement.style.height = "100%";
-            rightVideoElement.controls = true;
-        }).catch(function(error) {
-            // Обработка ошибки
-            console.log(error.message);
-            if (error.message === 'Permission denied') {
-                alert('Вы не предоставили разрешение на доступ к камере.');
-            }
-        });
-    </script>
+      // Настраиваем видеоэлементы
+      leftVideoElement.style.width = "100%";
+      leftVideoElement.style.height = "100%";
+      leftVideoElement.controls = true;
+
+      rightVideoElement.style.width = "100%";
+      rightVideoElement.style.height = "100%";
+      rightVideoElement.controls = true;
+
+      // Создаем canvas-элемент для отображения изображения
+      var canvas = document.createElement('canvas');
+      canvas.width = leftVideoElement.width;
+      canvas.height = leftVideoElement.height;
+
+      // Создаем контекст рисования
+      var ctx = canvas.getContext('2d');
+
+      // Отрисовываем изображение на canvas
+      ctx.drawImage(leftVideoElement, 0, 0);
+
+      // Создаем текстуру из canvas
+      var texture = new THREE.Texture(canvas);
+      texture.needsUpdate = true;
+
+      // Создаем материал для видео
+      var videoMaterial = new THREE.MeshBasicMaterial({
+        map: texture
+      });
+
+      // Создаем геометрию для видео
+      var videoGeometry = new THREE.PlaneGeometry(leftVideoElement.width, leftVideoElement.height);
+
+      // Создаем объект видео
+      var videoMesh = new THREE.Mesh(videoGeometry, videoMaterial);
+
+      // Добавляем объект видео в сцену
+      scene.add(videoMesh);
+
+      // Позиционируем объект видео
+      videoMesh.position.z = 0.1;
+
+      // Анимация
+      function animate() {
+        requestAnimationFrame(animate);
+
+        // Обновляем текстуру
+        texture.needsUpdate = true;
+
+        // Отрисовываем изображение на canvas
+        ctx.drawImage(leftVideoElement, 0, 0);
+
+        renderer.render(scene, camera);
+      }
+
+      animate();
+    }).catch(function(error) {
+      // Обработка ошибки
+      console.log(error.message);
+      if (error.message === 'Permission denied') {
+        alert('Вы не предоставили разрешение на доступ к камере.');
+      }
+    });
+  </script>
 </body>
 </html>
