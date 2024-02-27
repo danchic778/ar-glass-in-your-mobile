@@ -9,19 +9,21 @@
       margin: 0;
       padding: 0;
       height: 100%;
+      overflow: hidden; /* Убираем прокрутку */
     }
     #container {
       display: flex; /* Используем flexbox для расположения элементов */
       height: 100%;
     }
     #left-video, #right-video {
-      position: relative; /* Позиционирование относительно родителя */
+      position: fixed; /* Фиксируем положение элемента */
+      bottom: 30px; /* Положение от нижней границы экрана */
       flex: 1; /* Растягиваем элементы, чтобы они занимали одинаковую ширину */
       overflow: hidden; /* Обрезаем содержимое, если оно выходит за пределы элемента */
     }
     #left-video video, #right-video video {
       width: 100%; /* Видео должно быть шириной 100% родителя */
-      height: 100%; /* Видео должно быть высотой 100% родителя */
+      height: auto; /* Видео должно подстраиваться по высоте */
     }
     #left-video img, #right-video img {
       position: absolute; /* Абсолютное позиционирование внутри родителя */
