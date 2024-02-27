@@ -46,60 +46,9 @@
       rightVideoElement.style.height = "100%";
       rightVideoElement.controls = true;
 
-      // Создаем canvas-элемент для отображения изображения
-      var canvas = document.createElement('canvas');
-      canvas.width = leftVideoElement.width / 2;
-      canvas.height = leftVideoElement.height / 2;
-
-      // Создаем контекст рисования
-      var ctx = canvas.getContext('2d');
-
-      // Отрисовываем изображение на canvas
-      ctx.drawImage(leftVideoElement, 0, 0);
-
-      // Создаем текстуру из canvas
-      var texture = new THREE.Texture(canvas);
-      texture.needsUpdate = true;
-
-      // Создаем материал для видео
-      var videoMaterial = new THREE.MeshBasicMaterial({
-        map: texture
-      });
-
-      // Создаем геометрию для видео
-      var videoGeometry = new THREE.PlaneGeometry(leftVideoElement.width, leftVideoElement.height);
-
-      // Создаем два объекта видео
-      var leftVideoMesh = new THREE.Mesh(videoGeometry, videoMaterial);
-      var rightVideoMesh = new THREE.Mesh(videoGeometry, videoMaterial);
-
-      // Добавляем объекты видео в сцену
-      scene.add(leftVideoMesh);
-      scene.add(rightVideoMesh);
-
-      // Позиционируем объекты видео
-      leftVideoMesh.position.z = 0.1;
-      leftVideoMesh.position.x = -leftVideoElement.width / 4;
-      leftVideoMesh.position.y = 0;
-
-      rightVideoMesh.position.z = 0.1;
-      rightVideoMesh.position.x = rightVideoElement.width / 4;
-      rightVideoMesh.position.y = 0;
-
-      // Анимация
-      function animate() {
-        requestAnimationFrame(animate);
-
-        // Обновляем текстуру
-        texture.needsUpdate = true;
-
-        // Отрисовываем изображение на canvas
-        ctx.drawImage(leftVideoElement, 0, 0);
-
-        renderer.render(scene, camera);
-      }
-
-      animate();
+      // Запускаем видео
+      leftVideoElement.play();
+      rightVideoElement.play();
     }).catch(function(error) {
       // Обработка ошибки
       console.log(error.message);
