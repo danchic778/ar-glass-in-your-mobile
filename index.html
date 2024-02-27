@@ -5,8 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>VR-устройство с двумя проекциями видео</title>
   <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden; /* Убираем прокрутку */
+    }
+    #container {
+      display: flex; /* Используем flexbox для расположения элементов */
+      height: 100%;
+    }
     #left-video, #right-video {
       position: relative; /* Позиционирование относительно родителя */
+      flex: 1; /* Растягиваем элементы, чтобы они занимали одинаковую ширину */
+      overflow: hidden; /* Обрезаем содержимое, если оно выходит за пределы элемента */
+    }
+    #left-video video, #right-video video {
+      width: 100%; /* Видео должно быть шириной 100% родителя */
+      height: 100%; /* Видео должно быть высотой 100% родителя */
     }
     #left-video img, #right-video img {
       position: absolute; /* Абсолютное позиционирование внутри родителя */
@@ -20,10 +36,12 @@
 </head>
 <body>
   <div id="container">
-    <div id="left-video" style="width: 50%; height: 100%; float: left;">
+    <div id="left-video">
+      <video autoplay muted></video>
       <img src="img.png" alt="Overlay Image">
     </div>
-    <div id="right-video" style="width: 50%; height: 100%; float: right;">
+    <div id="right-video">
+      <video autoplay muted></video>
       <img src="img.png" alt="Overlay Image">
     </div>
   </div>
@@ -37,33 +55,16 @@
       audio: false
     }).then(function(stream) {
       // Получение видеопотока
-      var leftVideo = document.getElementById('left-video');
-      var rightVideo = document.getElementById('right-video');
-
-      // Создаем два видеоэлемента
-      var leftVideoElement = document.createElement('video');
-      var rightVideoElement = document.createElement('video');
+      var leftVideo = document.querySelector('#left-video video');
+      var rightVideo = document.querySelector('#right-video video');
 
       // Устанавливаем видеопоток для каждого видеоэлемента
-      leftVideoElement.srcObject = stream;
-      rightVideoElement.srcObject = stream;
-
-      // Добавляем видеоэлементы в контейнеры
-      leftVideo.appendChild(leftVideoElement);
-      rightVideo.appendChild(rightVideoElement);
-
-      // Настраиваем видеоэлементы
-      leftVideoElement.style.width = "100%";
-      leftVideoElement.style.height = "100%";
-      leftVideoElement.controls = true;
-
-      rightVideoElement.style.width = "100%";
-      rightVideoElement.style.height = "100%";
-      rightVideoElement.controls = true;
+      leftVideo.srcObject = stream;
+      rightVideo.srcObject = stream;
 
       // Запускаем видео
-      leftVideoElement.play();
-      rightVideoElement.play();
+      leftVideo.play();
+      rightVideo.play();
     }).catch(function(error) {
       // Обработка ошибки
       console.log(error.message);
