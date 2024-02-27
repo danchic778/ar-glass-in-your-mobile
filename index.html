@@ -69,16 +69,22 @@
       // Создаем геометрию для видео
       var videoGeometry = new THREE.PlaneGeometry(leftVideoElement.width, leftVideoElement.height);
 
-      // Создаем объект видео
-      var videoMesh = new THREE.Mesh(videoGeometry, videoMaterial);
+      // Создаем два объекта видео
+      var leftVideoMesh = new THREE.Mesh(videoGeometry, videoMaterial);
+      var rightVideoMesh = new THREE.Mesh(videoGeometry, videoMaterial);
 
-      // Добавляем объект видео в сцену
-      scene.add(videoMesh);
+      // Добавляем объекты видео в сцену
+      scene.add(leftVideoMesh);
+      scene.add(rightVideoMesh);
 
-      // Позиционируем объект видео
-      videoMesh.position.z = 0.1;
-      videoMesh.position.x = 0;
-      videoMesh.position.y = 0;
+      // Позиционируем объекты видео
+      leftVideoMesh.position.z = 0.1;
+      leftVideoMesh.position.x = -leftVideoElement.width / 4;
+      leftVideoMesh.position.y = 0;
+
+      rightVideoMesh.position.z = 0.1;
+      rightVideoMesh.position.x = rightVideoElement.width / 4;
+      rightVideoMesh.position.y = 0;
 
       // Анимация
       function animate() {
