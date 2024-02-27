@@ -4,14 +4,29 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>VR-устройство с двумя проекциями видео</title>
+  <style>
+    #left-video, #right-video {
+      position: relative; /* Позиционирование относительно родителя */
+    }
+    #left-video img, #right-video img {
+      position: absolute; /* Абсолютное позиционирование внутри родителя */
+      top: 50%; /* Верхний край по центру родителя */
+      left: 50%; /* Левый край по центру родителя */
+      transform: translate(-50%, -50%); /* Смещение на половину ширины и высоты */
+      max-width: 100%; /* Максимальная ширина 100% */
+      max-height: 100%; /* Максимальная высота 100% */
+    }
+  </style>
 </head>
 <body>
   <div id="container">
-    <div id="left-video" style="width: 50%; height: 100%; float: left;"></div>
-    <div id="right-video" style="width: 50%; height: 100%; float: right;"></div>
+    <div id="left-video" style="width: 50%; height: 100%; float: left;">
+      <img src="img.png" alt="Overlay Image">
+    </div>
+    <div id="right-video" style="width: 50%; height: 100%; float: right;">
+      <img src="img.png" alt="Overlay Image">
+    </div>
   </div>
-
-  <img id="image" src="img.png" style="display: none;">
 
   <script>
     // Запрос разрешения на доступ к камере
