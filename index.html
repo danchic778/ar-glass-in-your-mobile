@@ -43,8 +43,8 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 50%;
-      height: 50%;
+      width: 60%; /* Уменьшаем ширину окна браузера */
+      height: 60%; /* Уменьшаем высоту окна браузера */
       background-color: white;
       border: 1px solid black;
       display: none;
@@ -59,12 +59,12 @@
 <body>
   <div id="container">
     <div id="left-video">
-      <video id="left-youtube-video" autoplay muted></video>
-      <a id="left-browser-link" href="#">Youtube</a>
+      <video autoplay muted></video>
+      <a id="left-browser-link" href="#">Браузер</a>
     </div>
     <div id="right-video">
-      <video id="right-youtube-video" autoplay muted></video>
-      <a id="right-browser-link" href="#">Youtube</a>
+      <video autoplay muted></video>
+      <a id="right-browser-link" href="#">Браузер</a>
     </div>
     <div id="browser-window">
       <iframe id="browser-iframe" src=""></iframe>
@@ -79,13 +79,16 @@
     audio: false
   }).then(function(stream) {
     // Получение видеопотока
-    var cameraVideo = document.querySelector('#camera-video');
+    var leftVideo = document.querySelector('#left-video video');
+    var rightVideo = document.querySelector('#right-video video');
 
     // Устанавливаем видеопоток для каждого видеоэлемента
-    cameraVideo.srcObject = stream;
+    leftVideo.srcObject = stream;
+    rightVideo.srcObject = stream;
 
     // Запускаем видео
-    cameraVideo.play();
+    leftVideo.play();
+    rightVideo.play();
   }).catch(function(error) {
     // Обработка ошибки
     console.log(error.message);
@@ -106,20 +109,9 @@
 
       // Загружаем страницу в iframe
       var browserIframe = document.querySelector('#browser-iframe');
-      browserIframe.src = 'https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1'; // Пример видео с YouTube
+      browserIframe.src = 'https://www.youtube.com/embed/VIDEO_ID_RIGHT?autoplay=1';
     });
   });
-
-  // Установка URL для левого и правого ютуб-видео
-  var leftYoutubeVideo = document.querySelector('#left-youtube-video');
-  var rightYoutubeVideo = document.querySelector('#right-youtube-video');
-
-  leftYoutubeVideo.src = 'https://www.youtube.com/embed/VIDEO_ID_LEFT?autoplay=1';
-  rightYoutubeVideo.src = 'https://www.youtube.com/embed/VIDEO_ID_RIGHT?autoplay=1';
-
-  // Запуск видео при загрузке страницы
-  leftYoutubeVideo.play();
-  rightYoutubeVideo.play();
 </script>
 </body>
 </html>
