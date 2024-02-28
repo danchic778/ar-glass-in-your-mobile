@@ -14,6 +14,7 @@
     #container {
       display: flex;
       height: 100%;
+      position: relative; /* Добавляем позиционирование для контейнера */
     }
     #left-video, #right-video {
       position: relative;
@@ -48,6 +49,7 @@
       background-color: white;
       border: 1px solid black;
       display: none;
+      z-index: 10; /* Устанавливаем z-index, чтобы окно было поверх видео */
     }
     #browser-window iframe {
       width: 100%;
