@@ -60,14 +60,14 @@
   <div id="container">
     <div id="left-video">
       <video autoplay muted></video>
-      <a id="left-browser-link" href="#">Youtube</a>
+      <a id="left-browser-link" href="#">YouTube</a>
     </div>
     <div id="right-video">
       <video autoplay muted></video>
-      <a id="right-browser-link" href="#">Youtube</a>
+      <a id="right-browser-link" href="#">YouTube</a>
     </div>
     <div id="browser-window">
-      <iframe id="browser-iframe" src=""></iframe>
+      <iframe id="browser-iframe" src="https://www.youtube.com" allowfullscreen></iframe>
     </div>
   </div>
 <script>
@@ -109,7 +109,7 @@
 
       // Загружаем страницу в iframe
       var browserIframe = document.querySelector('#browser-iframe');
-      browserIframe.src = 'https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1'; // Пример видео с YouTube
+      browserIframe.src = 'https://www.youtube.com';
     });
   });
 </script>
