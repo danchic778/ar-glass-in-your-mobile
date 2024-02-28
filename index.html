@@ -38,22 +38,6 @@
       font-size: 24px;
       font-weight: bold;
     }
-    #browser-window {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 50%;
-      height: 50%;
-      background-color: white;
-      border: 1px solid black;
-      display: none;
-    }
-    #browser-window iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
   </style>
 </head>
 <body>
@@ -65,9 +49,6 @@
     <div id="right-video">
       <video autoplay muted></video>
       <a id="right-browser-link" href="#">Браузер</a>
-    </div>
-    <div id="browser-window">
-      <iframe id="browser-iframe" src=""></iframe>
     </div>
   </div>
 <script>
@@ -103,13 +84,8 @@
     browserLink.addEventListener('click', function(event) {
       event.preventDefault(); // Предотвращаем стандартное поведение ссылки
 
-      // Показываем окно браузера
-      var browserWindow = document.querySelector('#browser-window');
-      browserWindow.style.display = 'block';
-
-      // Загружаем страницу в iframe
-      var browserIframe = document.querySelector('#browser-iframe');
-      browserIframe.src = 'https://ya.ru'; // Пример поискового запроса Google
+      // Открываем новое окно браузера с Google поиском
+      window.open('https://www.google.com', '_blank');
     });
   });
 </script>
