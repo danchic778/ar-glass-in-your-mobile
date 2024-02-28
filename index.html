@@ -21,9 +21,9 @@
       overflow: hidden;
     }
     #left-video video, #right-video video {
-      width: 200%;
-      height: 200%;
-      transform: translate(-16.67%, -16.67%);
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
     #left-video a, #right-video a {
       position: absolute;
@@ -59,11 +59,11 @@
 <body>
   <div id="container">
     <div id="left-video">
-      <video autoplay muted></video>
+      <video id="camera-video" autoplay muted></video>
       <a id="left-browser-link" href="#">Youtube</a>
     </div>
     <div id="right-video">
-      <video autoplay muted></video>
+      <video id="camera-video-clone" autoplay muted></video>
       <a id="right-browser-link" href="#">Youtube</a>
     </div>
     <div id="browser-window">
@@ -79,16 +79,16 @@
     audio: false
   }).then(function(stream) {
     // Получение видеопотока
-    var leftVideo = document.querySelector('#left-video video');
-    var rightVideo = document.querySelector('#right-video video');
+    var cameraVideo = document.querySelector('#camera-video');
+    var cameraVideoClone = document.querySelector('#camera-video-clone');
 
     // Устанавливаем видеопоток для каждого видеоэлемента
-    leftVideo.srcObject = stream;
-    rightVideo.srcObject = stream;
+    cameraVideo.srcObject = stream;
+    cameraVideoClone.srcObject = stream;
 
     // Запускаем видео
-    leftVideo.play();
-    rightVideo.play();
+    cameraVideo.play();
+    cameraVideoClone.play();
   }).catch(function(error) {
     // Обработка ошибки
     console.log(error.message);
