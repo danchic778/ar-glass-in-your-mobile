@@ -9,29 +9,50 @@
       margin: 0;
       padding: 0;
       height: 100%;
-      overflow: hidden; /* Убираем прокрутку */
+      overflow: hidden;
     }
     #container {
-      display: flex; /* Используем flexbox для расположения элементов */
+      display: flex;
       height: 100%;
     }
     #left-video, #right-video {
-      position: relative; /* Позиционирование относительно родителя */
-      flex: 1; /* Растягиваем элементы, чтобы они занимали одинаковую ширину */
-      overflow: hidden; /* Обрезаем содержимое, если оно выходит за пределы элемента */
+      position: relative;
+      flex: 1;
+      overflow: hidden;
     }
     #left-video video, #right-video video {
-      width: 200%; /* Увеличиваем видео до 150% от исходного размера */
-      height: 200%; /* Увеличиваем видео до 150% от исходного размера */
-      transform: translate(-16.67%, -16.67%); /* Смещаем видео на половину увеличения */
+      width: 200%;
+      height: 200%;
+      transform: translate(-16.67%, -16.67%);
     }
-    #left-video img, #right-video img {
-      position: absolute; /* Абсолютное позиционирование внутри родителя */
-      top: 50%; /* Верхний край по центру родителя */
-      left: 50%; /* Левый край по центру родителя */
-      transform: translate(-50%, -50%); /* Смещение на половину ширины и высоты */
-      max-width: 50%; /* Максимальная ширина 50% от исходного размера */
-      max-height: 50%; /* Максимальная высота 50% от исходного размера */
+    #left-video a, #right-video a {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      max-width: 50%;
+      max-height: 50%;
+      cursor: pointer;
+      text-decoration: none;
+      color: black;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    #browser-window {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 50%;
+      height: 50%;
+      background-color: white;
+      border: 1px solid black;
+      display: none;
+    }
+    #browser-window iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
     }
   </style>
 </head>
@@ -39,39 +60,58 @@
   <div id="container">
     <div id="left-video">
       <video autoplay muted></video>
-      <img src="img.png" alt="Overlay Image">
+      <a id="left-browser-link" href="#">Браузер</a>
     </div>
     <div id="right-video">
       <video autoplay muted></video>
-      <img src="img.png" alt="Overlay Image">
+      <a id="right-browser-link" href="#">Браузер</a>
+    </div>
+    <div id="browser-window">
+      <iframe id="browser-iframe" src=""></iframe>
     </div>
   </div>
-  <script>
-    // Запрос разрешения на доступ к камере
-    navigator.mediaDevices.getUserMedia({
-      video: {
-        facingMode: "environment" // "user" - фронтальная, "environment" - основная
-      },
-      audio: false
-    }).then(function(stream) {
-      // Получение видеопотока
-      var leftVideo = document.querySelector('#left-video video');
-      var rightVideo = document.querySelector('#right-video video');
+<script>
+  // Запрос разрешения на доступ к камере
+  navigator.mediaDevices.getUserMedia({
+    video: {
+      facingMode: "environment"
+    },
+    audio: false
+  }).then(function(stream) {
+    // Получение видеопотока
+    var leftVideo = document.querySelector('#left-video video');
+    var rightVideo = document.querySelector('#right-video video');
 
-      // Устанавливаем видеопоток для каждого видеоэлемента
-      leftVideo.srcObject = stream;
-      rightVideo.srcObject = stream;
+    // Устанавливаем видеопоток для каждого видеоэлемента
+    leftVideo.srcObject = stream;
+    rightVideo.srcObject = stream;
 
-      // Запускаем видео
-      leftVideo.play();
-      rightVideo.play();
-    }).catch(function(error) {
-      // Обработка ошибки
-      console.log(error.message);
-      if (error.message === 'Permission denied') {
-        alert('Вы не предоставили разрешение на доступ к камере.');
-      }
+    // Запускаем видео
+    leftVideo.play();
+    rightVideo.play();
+  }).catch(function(error) {
+    // Обработка ошибки
+    console.log(error.message);
+    if (error.message === 'Permission denied') {
+      alert('Вы не предоставили разрешение на доступ к камере.');
+    }
+  });
+
+  // Добавляем обработчик события клика на гиперссылку браузера
+  var browserLinks = document.querySelectorAll('a'); // Выбираем все гиперссылки на странице
+  browserLinks.forEach(function(browserLink) {
+    browserLink.addEventListener('click', function(event) {
+      event.preventDefault(); // Предотвращаем стандартное поведение ссылки
+
+      // Показываем окно браузера
+      var browserWindow = document.querySelector('#browser-window');
+      browserWindow.style.display = 'block';
+
+      // Загружаем страницу в iframe
+      var browserIframe = document.querySelector('#browser-iframe');
+      browserIframe.src = 'https://www.youtube.com';
     });
-  </script>
+  });
+</script>
 </body>
 </html>
