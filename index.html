@@ -38,29 +38,19 @@
       font-size: 24px;
       font-weight: bold;
     }
-    #browser-window {
+    .youtube-video {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 60%; /* Уменьшаем ширину окна браузера */
-      height: 60%; /* Уменьшаем высоту окна браузера */
-      background-color: white;
-      border: 1px solid black;
-      display: none;
-    }
-    #browser-window iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
-    .youtube-video {
-      position: absolute;
-      top: 0;
-      left: 0;
       width: 50%; /* Устанавливаем размер видео с YouTube */
       height: 50%; /* Устанавливаем размер видео с YouTube */
       z-index: 1; /* Устанавливаем z-index, чтобы видео с YouTube отображалось поверх видеопотока */
+    }
+    .youtube-video iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
     }
   </style>
 </head>
@@ -68,20 +58,17 @@
   <div id="container">
     <div id="left-video">
       <video autoplay muted></video>
-      <div class="youtube-video">
-        <!-- Видео с YouTube будет здесь -->
-      </div>
       <a id="left-browser-link" href="#">Браузер</a>
+      <div class="youtube-video" style="display: none;">
+        <iframe id="left-youtube-iframe" src="" frameborder="0" allowfullscreen></iframe>
+      </div>
     </div>
     <div id="right-video">
       <video autoplay muted></video>
-      <div class="youtube-video">
-        <!-- Видео с YouTube будет здесь -->
-      </div>
       <a id="right-browser-link" href="#">Браузер</a>
-    </div>
-    <div id="browser-window">
-      <iframe id="browser-iframe" src=""></iframe>
+      <div class="youtube-video" style="display: none;">
+        <iframe id="right-youtube-iframe" src="" frameborder="0" allowfullscreen></iframe>
+      </div>
     </div>
   </div>
 <script>
@@ -112,30 +99,21 @@
   });
 
   // Добавляем обработчик события клика на гиперссылку браузера
-  var browserLinks = document.querySelectorAll('a'); // Выбираем все гиперссылки на странице
-  browserLinks.forEach(function(browserLink) {
-    browserLink.addEventListener('click', function(event) {
-      event.preventDefault(); // Предотвращаем стандартное поведение ссылки
+  var leftBrowserLink = document.querySelector('#left-browser-link');
+  var rightBrowserLink = document.querySelector('#right-browser-link');
+  var leftYoutubeIframe = document.querySelector('#left-youtube-iframe');
+  var rightYoutubeIframe = document.querySelector('#right-youtube-iframe');
 
-      // Показываем окно браузера
-      var browserWindow = document.querySelector('#browser-window');
-      browserWindow.style.display = 'block';
-
-      // Загружаем страницу в iframe
-      var browserIframe = document.querySelector('#browser-iframe');
-      browserIframe.src = 'https://www.youtube.com/embed/VIDEO_ID_RIGHT?autoplay=1';
-    });
+  leftBrowserLink.addEventListener('click', function(event) {
+    event.preventDefault(); // Предотвращаем стандартное поведение ссылки
+    leftYoutubeIframe.src = 'https://www.youtube.com/embed/VIDEO_ID_LEFT?autoplay=1';
+    leftYoutubeIframe.style.display = 'block';
   });
 
-  // Добавляем видео с YouTube
-  var youtubeVideos = document.querySelectorAll('.youtube-video');
-  youtubeVideos.forEach(function(youtubeVideo) {
-    var iframe = document.createElement('iframe');
-    iframe.src = 'https://www.youtube.com/embed/VIDEO_ID_LEFT?autoplay=1';
-    iframe.style.width = '100%';
-    iframe.style.height = '100%';
-    iframe.style.border = 'none';
-    youtubeVideo.appendChild(iframe);
+  rightBrowserLink.addEventListener('click', function(event) {
+    event.preventDefault(); // Предотвращаем стандартное поведение ссылки
+    rightYoutubeIframe.src = 'https://www.youtube.com/embed/VIDEO_ID_RIGHT?autoplay=1';
+    rightYoutubeIframe.style.display = 'block';
   });
 </script>
 </body>
