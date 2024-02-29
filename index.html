@@ -106,13 +106,13 @@
 
   leftBrowserLink.addEventListener('click', function(event) {
     event.preventDefault(); // Предотвращаем стандартное поведение ссылки
-    leftYoutubeIframe.src = 'https://www.youtube.com/embed/VIDEO_ID_LEFT?autoplay=1';
+    leftYoutubeIframe.src = 'https://www.youtube.com/embed/REAL_VIDEO_ID_LEFT?autoplay=1'; // Замените REAL_VIDEO_ID_LEFT на реальный идентификатор видео на YouTube
     leftYoutubeIframe.style.display = 'block';
   });
 
   rightBrowserLink.addEventListener('click', function(event) {
     event.preventDefault(); // Предотвращаем стандартное поведение ссылки
-    rightYoutubeIframe.src = 'https://www.youtube.com/embed/VIDEO_ID_RIGHT?autoplay=1';
+    rightYoutubeIframe.src = 'https://www.youtube.com/embed/REAL_VIDEO_ID_RIGHT?autoplay=1'; // Замените REAL_VIDEO_ID_RIGHT на реальный идентификатор видео на YouTube
     rightYoutubeIframe.style.display = 'block';
   });
 </script>
