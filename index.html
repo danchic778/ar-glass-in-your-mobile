@@ -38,6 +38,17 @@
       cursor: pointer;
       font-size: 16px;
     }
+    .timer {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      padding: 5px;
+      border-radius: 5px;
+      font-size: 14px;
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -45,12 +56,15 @@
     <div id="left-video">
       <video autoplay muted></video>
       <button class="youtube-button">Ютуб</button>
+      <div class="timer"></div>
     </div>
     <div id="right-video">
       <video autoplay muted></video>
       <button class="youtube-button">Ютуб</button>
+      <div class="timer"></div>
     </div>
   </div>
+<script src="https://cdn.rawgit.com/cozmo/jsQR/1.2.1/dist/jsQR.js"></script>
 <script>
   // Запрос разрешения на доступ к камере
   navigator.mediaDevices.getUserMedia({
@@ -70,6 +84,53 @@
     // Запускаем видео
     leftVideo.play();
     rightVideo.play();
+
+    // Функция для обработки кадра видео
+    function processFrame(video, canvas, context, timerElement) {
+      if (video.readyState === video.HAVE_ENOUGH_DATA) {
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+        var code = jsQR(imageData.data, canvas.width, canvas.height);
+        if (code) {
+          // Если QR-код обнаружен, запускаем таймер
+          var timer = 3;
+          timerElement.textContent = timer;
+          timerElement.style.display = 'block';
+          var timerInterval = setInterval(function() {
+            timer -= 1;
+            timerElement.textContent = timer;
+            if (timer <= 0) {
+              clearInterval(timerInterval);
+              timerElement.style.display = 'none';
+              // Выполняем клик по элементу сайта
+              // Вам нужно заменить этот код на код, который выполняет действие, которое вам нужно
+              console.log('Клик по элементу сайта');
+              // Пример: клик по кнопке "Ютуб"
+              document.querySelector('#left-video .youtube-button').click();
+            }
+          }, 1000);
+        }
+      }
+      requestAnimationFrame(function() {
+        processFrame(video, canvas, context, timerElement);
+      });
+    }
+
+    // Создаем элементы canvas для рисования кадров
+    var leftCanvas = document.createElement('canvas');
+    var rightCanvas = document.createElement('canvas');
+    leftCanvas.width = leftVideo.videoWidth;
+    leftCanvas.height = leftVideo.videoHeight;
+    rightCanvas.width = rightVideo.videoWidth;
+    rightCanvas.height = rightVideo.videoHeight;
+
+    // Получаем контексты для рисования
+    var leftContext = leftCanvas.getContext('2d');
+    var rightContext = rightCanvas.getContext('2d');
+
+    // Запускаем обработку кадров
+    processFrame(leftVideo, leftCanvas, leftContext, document.querySelector('#left-video .timer'));
+    processFrame(rightVideo, rightCanvas, rightContext, document.querySelector('#right-video .timer'));
   }).catch(function(error) {
     // Обработка ошибки
     console.log(error.message);
