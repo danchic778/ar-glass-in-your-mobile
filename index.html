@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VR-устройство с двумя проекциями видео</title>
+  <title>Распознавание руки и клик</title>
   <style>
     body, html {
       margin: 0;
@@ -37,7 +37,7 @@
     </div>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/hand-pose-detection"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/handpose"></script>
   <script>
     const modelParams = {
       flipHorizontal: true,   // flip e.g for video
@@ -87,7 +87,14 @@
     function simulateClick(position) {
       const element = document.elementFromPoint(position.x, position.y);
       if (element) {
-        element.click();
+        const clickEvent = new MouseEvent('click', {
+          view: window,
+          bubbles: true,
+          cancelable: true,
+          clientX: position.x,
+          clientY: position.y
+        });
+        element.dispatchEvent(clickEvent);
       }
     }
   </script>
