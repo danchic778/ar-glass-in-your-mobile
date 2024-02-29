@@ -25,15 +25,30 @@
       height: 100%;
       object-fit: cover;
     }
+    .youtube-button {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: linear-gradient(to right, red, orange);
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
   </style>
 </head>
 <body>
   <div id="container">
     <div id="left-video">
       <video autoplay muted></video>
+      <button class="youtube-button">Ютуб</button>
     </div>
     <div id="right-video">
       <video autoplay muted></video>
+      <button class="youtube-button">Ютуб</button>
     </div>
   </div>
 <script>
