@@ -25,34 +25,19 @@
       height: 100%;
       object-fit: cover;
     }
-    .youtube-button {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: linear-gradient(to right, red, orange);
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 16px;
-    }
   </style>
 </head>
 <body>
   <div id="container">
     <div id="left-video">
       <video id="left-video-element" autoplay muted></video>
-      <button id="left-youtube-button" class="youtube-button">Ютуб</button>
     </div>
     <div id="right-video">
       <video id="right-video-element" autoplay muted></video>
-      <button id="right-youtube-button" class="youtube-button">Ютуб</button>
     </div>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
-  <script src="https://cdn.jsdelivr.net/npm/handtrackjs/dist/handtrack.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/hand-pose-detection"></script>
   <script>
     const modelParams = {
       flipHorizontal: true,   // flip e.g for video
@@ -61,8 +46,10 @@
       scoreThreshold: 0.6,    // confidence threshold for predictions.
     };
 
-    handTrack.load(modelParams).then(model => {
-      // Запрашиваем доступ к камере
+    let lastHandPosition = null;
+    let samePositionCount = 0;
+
+    handpose.load(modelParams).then(model => {
       navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
         const videos = document.querySelectorAll('video');
         videos.forEach(video => {
@@ -70,36 +57,38 @@
           video.play();
         });
 
-        const leftCanvas = document.createElement('canvas');
-        const rightCanvas = document.createElement('canvas');
-        const leftContext = leftCanvas.getContext('2d');
-        const rightContext = rightCanvas.getContext('2d');
-
-        const leftButton = document.getElementById('left-youtube-button');
-        const rightButton = document.getElementById('right-youtube-button');
-
-        runDetection(model, videos[0], leftCanvas, leftContext, leftButton);
-        runDetection(model, videos[1], rightCanvas, rightContext, rightButton);
+        runDetection(model, videos[0]);
+        runDetection(model, videos[1]);
       });
     });
 
-    function runDetection(model, video, canvas, context, button) {
-      model.detect(video).then(predictions => {
-        context.clearRect(0, 0, canvas.width, canvas.height);
+    function runDetection(model, video) {
+      model.estimateHands(video).then(predictions => {
         if (predictions.length > 0) {
-          // Находим координаты прямоугольника, ограничивающего руку
-          const boundingBox = predictions[0].bbox;
+          const hand = predictions[0];
+          const handPosition = { x: hand.annotations.palmBase[0][0], y: hand.annotations.palmBase[0][1] };
 
-          // Обрезаем видео по координатам руки
-          context.drawImage(video, boundingBox[0], boundingBox[1], boundingBox[2], boundingBox[3], 0, 0, canvas.width, canvas.height);
-
-          // Накладываем видео с рукой на кнопку
-          button.style.backgroundImage = `url(${canvas.toDataURL()})`;
-          button.style.backgroundSize = 'cover';
+          if (lastHandPosition && handPosition.x === lastHandPosition.x && handPosition.y === lastHandPosition.y) {
+            samePositionCount++;
+            if (samePositionCount >= 30) { // Примерно 3 секунды на одном положении
+              simulateClick(handPosition);
+              samePositionCount = 0;
+            }
+          } else {
+            lastHandPosition = handPosition;
+            samePositionCount = 0;
+          }
         }
 
-        requestAnimationFrame(() => runDetection(model, video, canvas, context, button));
+        requestAnimationFrame(() => runDetection(model, video));
       });
+    }
+
+    function simulateClick(position) {
+      const element = document.elementFromPoint(position.x, position.y);
+      if (element) {
+        element.click();
+      }
     }
   </script>
 </body>
