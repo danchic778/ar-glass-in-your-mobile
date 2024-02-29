@@ -38,124 +38,69 @@
       cursor: pointer;
       font-size: 16px;
     }
-    .timer {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: rgba(0, 0, 0, 0.5);
-      color: white;
-      padding: 5px;
-      border-radius: 5px;
-      font-size: 14px;
-      display: none;
-    }
   </style>
 </head>
 <body>
   <div id="container">
     <div id="left-video">
-      <video autoplay muted playsinline></video>
-      <button class="youtube-button">Ютуб</button>
-      <div class="timer"></div>
+      <video id="left-video-element" autoplay muted></video>
+      <button id="left-youtube-button" class="youtube-button">Ютуб</button>
     </div>
     <div id="right-video">
-      <video autoplay muted playsinline></video>
-      <button class="youtube-button">Ютуб</button>
-      <div class="timer"></div>
+      <video id="right-video-element" autoplay muted></video>
+      <button id="right-youtube-button" class="youtube-button">Ютуб</button>
     </div>
   </div>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdn.rawgit.com/cozmo/jsQR/1.2.1/dist/jsQR.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+  <script src="https://cdn.jsdelivr.net/npm/handtrackjs/dist/handtrack.min.js"></script>
   <script>
-    // Запрос разрешения на доступ к камере
-    navigator.mediaDevices.getUserMedia({
-      video: {
-        facingMode: "environment"
-      },
-      audio: false
-    }).then(function(stream) {
-      // Получение видеопотока
-      var leftVideo = document.querySelector('#left-video video');
-      var rightVideo = document.querySelector('#right-video video');
+    const modelParams = {
+      flipHorizontal: true,   // flip e.g for video
+      maxNumBoxes: 20,        // maximum number of boxes to detect
+      iouThreshold: 0.5,      // ioU threshold for non-max suppression
+      scoreThreshold: 0.6,    // confidence threshold for predictions.
+    };
 
-      // Устанавливаем видеопоток для каждого видеоэлемента
-      leftVideo.srcObject = stream;
-      rightVideo.srcObject = stream;
-
-      // Запускаем видео
-      leftVideo.play();
-      rightVideo.play();
-
-      // Функция для обработки кадра видео
-      function processFrame(video, canvas, context, timerElement) {
-        if (video.readyState === video.HAVE_ENOUGH_DATA) {
-          context.drawImage(video, 0, 0, canvas.width, canvas.height);
-          var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-          var code = jsQR(imageData.data, canvas.width, canvas.height);
-          if (code) {
-            // Если QR-код обнаружен, запускаем таймер
-            var timer = 3;
-            timerElement.textContent = timer;
-            timerElement.style.display = 'block';
-            var timerInterval = setInterval(function() {
-              timer -= 1;
-              timerElement.textContent = timer;
-              if (timer <= 0) {
-                clearInterval(timerInterval);
-                timerElement.style.display = 'none';
-                // Выполняем клик по элементу сайта
-                // Вам нужно заменить этот код на код, который выполняет действие, которое вам нужно
-                console.log('Клик по элементу сайта');
-                // Пример: клик по кнопке "Ютуб"
-                // document.querySelector('#left-video .youtube-button').click();
-
-                // **Вставьте свой код вместо этой строки**
-                
-              }
-            }, 1000);
-          }
-        }
-        requestAnimationFrame(function() {
-          processFrame(video, canvas, context, timerElement);
+    handTrack.load(modelParams).then(model => {
+      // Запрашиваем доступ к камере
+      navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
+        const videos = document.querySelectorAll('video');
+        videos.forEach(video => {
+          video.srcObject = stream;
+          video.play();
         });
-      }
 
-      // Создаем элементы canvas для рисования кадров
-      var leftCanvas = document.createElement('canvas');
-      var rightCanvas = document.createElement('canvas');
-      leftCanvas.width = leftVideo.videoWidth;
-      leftCanvas.height = leftVideo.videoHeight;
-      rightCanvas.width = rightVideo.videoWidth;
-      rightCanvas.height = rightVideo.videoHeight;
+        const leftCanvas = document.createElement('canvas');
+        const rightCanvas = document.createElement('canvas');
+        const leftContext = leftCanvas.getContext('2d');
+        const rightContext = rightCanvas.getContext('2d');
 
-      // Получаем контексты для рисования
-      var leftContext = leftCanvas.getContext('2d');
-      var rightContext = rightCanvas.getContext('2d');
+        const leftButton = document.getElementById('left-youtube-button');
+        const rightButton = document.getElementById('right-youtube-button');
 
-      // Запускаем обработку кадров
-      processFrame(leftVideo, leftCanvas, leftContext, document.querySelector('#left-video .timer'));
-      processFrame(rightVideo, rightCanvas, rightContext, document.querySelector('#right-video .timer'));
-    }).catch(function(error) {
-      // Обработка ошибки
-      console.log(error.message);
-      if (error.message === 'Permission denied') {
-        alert('Вы не предоставили разрешение на доступ к камере.');
-      }
+        runDetection(model, videos[0], leftCanvas, leftContext, leftButton);
+        runDetection(model, videos[1], rightCanvas, rightContext, rightButton);
+      });
     });
 
-    // **Добавьте свой код ниже**
+    function runDetection(model, video, canvas, context, button) {
+      model.detect(video).then(predictions => {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        if (predictions.length > 0) {
+          // Находим координаты прямоугольника, ограничивающего руку
+          const boundingBox = predictions[0].bbox;
 
-    // Пример: обработка события клика по кнопке "Ютуб"
-    $(document).on('click', '.youtube-button', function() {
-      var videoElement = $(this).parent().find('video');
-      if (videoElement.prop('muted')) {
-        videoElement.prop('muted', false);
-      } else {
-        videoElement.prop('muted', true);
-      }
-    });
+          // Обрезаем видео по координатам руки
+          context.drawImage(video, boundingBox[0], boundingBox[1], boundingBox[2], boundingBox[3], 0, 0, canvas.width, canvas.height);
 
+          // Накладываем видео с рукой на кнопку
+          button.style.backgroundImage = `url(${canvas.toDataURL()})`;
+          button.style.backgroundSize = 'cover';
+        }
+
+        requestAnimationFrame(() => runDetection(model, video, canvas, context, button));
+      });
+    }
   </script>
 </body>
 </html>
-
