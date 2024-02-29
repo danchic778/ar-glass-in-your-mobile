@@ -25,50 +25,15 @@
       height: 100%;
       object-fit: cover;
     }
-    #left-video a, #right-video a {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      max-width: 50%;
-      max-height: 50%;
-      cursor: pointer;
-      text-decoration: none;
-      color: black;
-      font-size: 24px;
-      font-weight: bold;
-    }
-    .youtube-video {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 50%;
-      height: 50%;
-      z-index: 1;
-    }
-    .youtube-video iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
   </style>
 </head>
 <body>
   <div id="container">
     <div id="left-video">
       <video autoplay muted></video>
-      <a id="left-browser-link" href="#">Браузер</a>
-      <div class="youtube-video" style="display: none;">
-        <iframe id="left-youtube-iframe" src="" frameborder="0" allowfullscreen></iframe>
-      </div>
     </div>
     <div id="right-video">
       <video autoplay muted></video>
-      <a id="right-browser-link" href="#">Браузер</a>
-      <div class="youtube-video" style="display: none;">
-        <iframe id="right-youtube-iframe" src="" frameborder="0" allowfullscreen></iframe>
-      </div>
     </div>
   </div>
 <script>
@@ -96,28 +61,6 @@
     if (error.message === 'Permission denied') {
       alert('Вы не предоставили разрешение на доступ к камере.');
     }
-  });
-
-  // Добавляем обработчик события клика на гиперссылку браузера
-  var leftBrowserLink = document.querySelector('#left-browser-link');
-  var rightBrowserLink = document.querySelector('#right-browser-link');
-  var leftYoutubeIframe = document.querySelector('#left-youtube-iframe');
-  var rightYoutubeIframe = document.querySelector('#right-youtube-iframe');
-
-  // Замените REAL_VIDEO_ID_LEFT и REAL_VIDEO_ID_RIGHT на реальные идентификаторы видео на YouTube
-  var realVideoIdLeft = 'dQw4w9WgXcQ'; // Пример идентификатора видео
-  var realVideoIdRight = 'dQw4w9WgXcQ'; // Пример идентификатора видео
-
-  leftBrowserLink.addEventListener('click', function(event) {
-    event.preventDefault(); // Предотвращаем стандартное поведение ссылки
-    leftYoutubeIframe.src = 'https://www.youtube.com/embed/' + realVideoIdLeft + '?autoplay=1';
-    leftYoutubeIframe.style.display = 'block';
-  });
-
-  rightBrowserLink.addEventListener('click', function(event) {
-    event.preventDefault(); // Предотвращаем стандартное поведение ссылки
-    rightYoutubeIframe.src = 'https://www.youtube.com/embed/' + realVideoIdRight + '?autoplay=1';
-    rightYoutubeIframe.style.display = 'block';
   });
 </script>
 </body>
