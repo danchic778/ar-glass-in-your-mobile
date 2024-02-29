@@ -54,90 +54,108 @@
 <body>
   <div id="container">
     <div id="left-video">
-      <video autoplay muted></video>
+      <video autoplay muted playsinline></video>
       <button class="youtube-button">Ютуб</button>
       <div class="timer"></div>
     </div>
     <div id="right-video">
-      <video autoplay muted></video>
+      <video autoplay muted playsinline></video>
       <button class="youtube-button">Ютуб</button>
       <div class="timer"></div>
     </div>
   </div>
-<script src="https://cdn.rawgit.com/cozmo/jsQR/1.2.1/dist/jsQR.js"></script>
-<script>
-  // Запрос разрешения на доступ к камере
-  navigator.mediaDevices.getUserMedia({
-    video: {
-      facingMode: "environment"
-    },
-    audio: false
-  }).then(function(stream) {
-    // Получение видеопотока
-    var leftVideo = document.querySelector('#left-video video');
-    var rightVideo = document.querySelector('#right-video video');
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.rawgit.com/cozmo/jsQR/1.2.1/dist/jsQR.js"></script>
+  <script>
+    // Запрос разрешения на доступ к камере
+    navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode: "environment"
+      },
+      audio: false
+    }).then(function(stream) {
+      // Получение видеопотока
+      var leftVideo = document.querySelector('#left-video video');
+      var rightVideo = document.querySelector('#right-video video');
 
-    // Устанавливаем видеопоток для каждого видеоэлемента
-    leftVideo.srcObject = stream;
-    rightVideo.srcObject = stream;
+      // Устанавливаем видеопоток для каждого видеоэлемента
+      leftVideo.srcObject = stream;
+      rightVideo.srcObject = stream;
 
-    // Запускаем видео
-    leftVideo.play();
-    rightVideo.play();
+      // Запускаем видео
+      leftVideo.play();
+      rightVideo.play();
 
-    // Функция для обработки кадра видео
-    function processFrame(video, canvas, context, timerElement) {
-      if (video.readyState === video.HAVE_ENOUGH_DATA) {
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
-        var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-        var code = jsQR(imageData.data, canvas.width, canvas.height);
-        if (code) {
-          // Если QR-код обнаружен, запускаем таймер
-          var timer = 3;
-          timerElement.textContent = timer;
-          timerElement.style.display = 'block';
-          var timerInterval = setInterval(function() {
-            timer -= 1;
+      // Функция для обработки кадра видео
+      function processFrame(video, canvas, context, timerElement) {
+        if (video.readyState === video.HAVE_ENOUGH_DATA) {
+          context.drawImage(video, 0, 0, canvas.width, canvas.height);
+          var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+          var code = jsQR(imageData.data, canvas.width, canvas.height);
+          if (code) {
+            // Если QR-код обнаружен, запускаем таймер
+            var timer = 3;
             timerElement.textContent = timer;
-            if (timer <= 0) {
-              clearInterval(timerInterval);
-              timerElement.style.display = 'none';
-              // Выполняем клик по элементу сайта
-              // Вам нужно заменить этот код на код, который выполняет действие, которое вам нужно
-              console.log('Клик по элементу сайта');
-              // Пример: клик по кнопке "Ютуб"
-              document.querySelector('#left-video .youtube-button').click();
-            }
-          }, 1000);
+            timerElement.style.display = 'block';
+            var timerInterval = setInterval(function() {
+              timer -= 1;
+              timerElement.textContent = timer;
+              if (timer <= 0) {
+                clearInterval(timerInterval);
+                timerElement.style.display = 'none';
+                // Выполняем клик по элементу сайта
+                // Вам нужно заменить этот код на код, который выполняет действие, которое вам нужно
+                console.log('Клик по элементу сайта');
+                // Пример: клик по кнопке "Ютуб"
+                // document.querySelector('#left-video .youtube-button').click();
+
+                // **Вставьте свой код вместо этой строки**
+                
+              }
+            }, 1000);
+          }
         }
+        requestAnimationFrame(function() {
+          processFrame(video, canvas, context, timerElement);
+        });
       }
-      requestAnimationFrame(function() {
-        processFrame(video, canvas, context, timerElement);
-      });
-    }
 
-    // Создаем элементы canvas для рисования кадров
-    var leftCanvas = document.createElement('canvas');
-    var rightCanvas = document.createElement('canvas');
-    leftCanvas.width = leftVideo.videoWidth;
-    leftCanvas.height = leftVideo.videoHeight;
-    rightCanvas.width = rightVideo.videoWidth;
-    rightCanvas.height = rightVideo.videoHeight;
+      // Создаем элементы canvas для рисования кадров
+      var leftCanvas = document.createElement('canvas');
+      var rightCanvas = document.createElement('canvas');
+      leftCanvas.width = leftVideo.videoWidth;
+      leftCanvas.height = leftVideo.videoHeight;
+      rightCanvas.width = rightVideo.videoWidth;
+      rightCanvas.height = rightVideo.videoHeight;
 
-    // Получаем контексты для рисования
-    var leftContext = leftCanvas.getContext('2d');
-    var rightContext = rightCanvas.getContext('2d');
+      // Получаем контексты для рисования
+      var leftContext = leftCanvas.getContext('2d');
+      var rightContext = rightCanvas.getContext('2d');
 
-    // Запускаем обработку кадров
-    processFrame(leftVideo, leftCanvas, leftContext, document.querySelector('#left-video .timer'));
-    processFrame(rightVideo, rightCanvas, rightContext, document.querySelector('#right-video .timer'));
-  }).catch(function(error) {
-    // Обработка ошибки
-    console.log(error.message);
-    if (error.message === 'Permission denied') {
-      alert('Вы не предоставили разрешение на доступ к камере.');
-    }
-  });
-</script>
+      // Запускаем обработку кадров
+      processFrame(leftVideo, leftCanvas, leftContext, document.querySelector('#left-video .timer'));
+      processFrame(rightVideo, rightCanvas, rightContext, document.querySelector('#right-video .timer'));
+    }).catch(function(error) {
+      // Обработка ошибки
+      console.log(error.message);
+      if (error.message === 'Permission denied') {
+        alert('Вы не предоставили разрешение на доступ к камере.');
+      }
+    });
+
+    // **Добавьте свой код ниже**
+
+    // Пример: обработка события клика по кнопке "Ютуб"
+    $(document).on('click', '.youtube-button', function() {
+      var videoElement = $(this).parent().find('video');
+      if (videoElement.prop('muted')) {
+        videoElement.prop('muted', false);
+      } else {
+        videoElement.prop('muted', true);
+      }
+    });
+
+  </script>
 </body>
 </html>
+
