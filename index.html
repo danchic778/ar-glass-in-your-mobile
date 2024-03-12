@@ -25,6 +25,16 @@
       height: 100%;
       object-fit: cover;
     }
+    #message {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 24px;
+      color: white;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -35,6 +45,7 @@
     <div id="right-video">
       <video id="right-video-element" autoplay muted></video>
     </div>
+    <div id="message">Рука распознана!</div>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/handpose"></script>
@@ -48,6 +59,7 @@
 
     let lastHandPosition = null;
     let samePositionCount = 0;
+    let handDetected = false;
 
     handpose.load(modelParams).then(model => {
       navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
@@ -70,13 +82,22 @@
 
           if (lastHandPosition && handPosition.x === lastHandPosition.x && handPosition.y === lastHandPosition.y) {
             samePositionCount++;
-            if (samePositionCount >= 30) { // Примерно 3 секунды на одном положении
-              simulateClick(handPosition);
-              samePositionCount = 0;
+            if (samePositionCount >= 30 && !handDetected) { // Примерно 3 секунды на одном положении
+              showMessage();
+              handDetected = true;
             }
           } else {
             lastHandPosition = handPosition;
             samePositionCount = 0;
+            if (handDetected) {
+              hideMessage();
+              handDetected = false;
+            }
+          }
+        } else {
+          if (handDetected) {
+            hideMessage();
+            handDetected = false;
           }
         }
 
@@ -84,18 +105,12 @@
       });
     }
 
-    function simulateClick(position) {
-      const element = document.elementFromPoint(position.x, position.y);
-      if (element) {
-        const clickEvent = new MouseEvent('click', {
-          view: window,
-          bubbles: true,
-          cancelable: true,
-          clientX: position.x,
-          clientY: position.y
-        });
-        element.dispatchEvent(clickEvent);
-      }
+    function showMessage() {
+      document.getElementById('message').style.display = 'block';
+    }
+
+    function hideMessage() {
+      document.getElementById('message').style.display = 'none';
     }
   </script>
 </body>
