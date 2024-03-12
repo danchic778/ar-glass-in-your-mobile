@@ -1,94 +1,43 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>вРаспознавание руки и клик</title>
-  <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      overflow: hidden;
-    }
-    #container {
-      display: flex;
-      height: 100%;
-    }
-    #left-video, #right-video {
-      position: relative;
-      flex: 1;
-      overflow: hidden;
-    }
-    #left-video video, #right-video video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    #message {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 24px;
-      color: white;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-      display: none;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Video Player</title>
+<style>
+  body, html {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+  video {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    z-index: -100;
+    background: url('your_image.jpg') no-repeat center center;
+    background-size: cover;
+  }
+</style>
 </head>
 <body>
-  <div id="container">
-    <div id="left-video">
-      <video id="left-video-element" autoplay muted></video>
-    </div>
-    <div id="right-video">
-      <video id="right-video-element" autoplay muted></video>
-    </div>
-    <div id="message">Палец распознан!</div>
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands"></script>
-  <script>
-    const hands = new Hands({locateFile: (file) => {
-      return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
-    }});
-    hands.setOptions({
-      maxNumHands: 2,
-      modelComplexity: 1,
-      minDetectionConfidence: 0.5,
-      minTrackingConfidence: 0.5
+<video autoplay muted id="videoElement"></video>
+
+<script>
+  // Запрашиваем доступ к камере
+  navigator.mediaDevices.getUserMedia({ video: true })
+    .then(function(stream) {
+      var video = document.querySelector('#videoElement');
+      video.srcObject = stream;
+      video.play();
+    })
+    .catch(function(err) {
+      console.log("An error occurred: " + err);
     });
-    hands.onResults(onResults);
-
-    const videoElement = document.getElementById('left-video-element');
-    const canvasElement = document.createElement('canvas');
-    const canvasCtx = canvasElement.getContext('2d');
-
-    function onResults(results) {
-      canvasCtx.save();
-      canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-      canvasCtx.drawImage(
-          results.image, 0, 0, canvasElement.width, canvasElement.height);
-      if (results.multiHandLandmarks) {
-        for (const landmarks of results.multiHandLandmarks) {
-          drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {color: '#00FF00', lineWidth: 5});
-          drawLandmarks(canvasCtx, landmarks, {color: '#FF0000', lineWidth: 2});
-        }
-      }
-      canvasCtx.restore();
-    }
-
-    const camera = new Camera(videoElement, {
-      onFrame: async () => {
-        await hands.send({image: videoElement});
-      },
-      width: 1280,
-      height: 720
-    });
-    camera.start();
-  </script>
+</script>
 </body>
 </html>
