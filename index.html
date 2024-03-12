@@ -45,7 +45,7 @@
     <div id="right-video">
       <video id="right-video-element" autoplay muted></video>
     </div>
-    <div id="message">Рука распознана!</div>
+    <div id="message">Палец распознан!</div>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/handpose"></script>
@@ -53,8 +53,8 @@
     const modelParams = {
       flipHorizontal: true,   // flip e.g for video
       maxNumBoxes: 20,        // maximum number of boxes to detect
-      iouThreshold: 0.5,      // ioU threshold for non-max suppression
-      scoreThreshold: 0.6,    // confidence threshold for predictions.
+      iouThreshold: 0.7,      // ioU threshold for non-max suppression
+      scoreThreshold: 0.7,    // confidence threshold for predictions.
     };
 
     let lastHandPosition = null;
