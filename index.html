@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Распознавание руки и клик</title>
+  <title>вРаспознавание руки и клик</title>
   <style>
     body, html {
       margin: 0;
@@ -47,71 +47,48 @@
     </div>
     <div id="message">Палец распознан!</div>
   </div>
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/handpose"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands"></script>
   <script>
-    const modelParams = {
-      flipHorizontal: true,   // flip e.g for video
-      maxNumBoxes: 20,        // maximum number of boxes to detect
-      iouThreshold: 0.7,      // ioU threshold for non-max suppression
-      scoreThreshold: 0.7,    // confidence threshold for predictions.
-    };
-
-    let lastHandPosition = null;
-    let samePositionCount = 0;
-    let handDetected = false;
-
-    handpose.load(modelParams).then(model => {
-      navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
-        const videos = document.querySelectorAll('video');
-        videos.forEach(video => {
-          video.srcObject = stream;
-          video.play();
-        });
-
-        runDetection(model, videos[0]);
-        runDetection(model, videos[1]);
-      });
+    const hands = new Hands({locateFile: (file) => {
+      return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
+    }});
+    hands.setOptions({
+      maxNumHands: 2,
+      modelComplexity: 1,
+      minDetectionConfidence: 0.5,
+      minTrackingConfidence: 0.5
     });
+    hands.onResults(onResults);
 
-    function runDetection(model, video) {
-      model.estimateHands(video).then(predictions => {
-        if (predictions.length > 0) {
-          const hand = predictions[0];
-          const handPosition = { x: hand.annotations.palmBase[0][0], y: hand.annotations.palmBase[0][1] };
+    const videoElement = document.getElementById('left-video-element');
+    const canvasElement = document.createElement('canvas');
+    const canvasCtx = canvasElement.getContext('2d');
 
-          if (lastHandPosition && handPosition.x === lastHandPosition.x && handPosition.y === lastHandPosition.y) {
-            samePositionCount++;
-            if (samePositionCount >= 30 && !handDetected) { // Примерно 3 секунды на одном положении
-              showMessage();
-              handDetected = true;
-            }
-          } else {
-            lastHandPosition = handPosition;
-            samePositionCount = 0;
-            if (handDetected) {
-              hideMessage();
-              handDetected = false;
-            }
-          }
-        } else {
-          if (handDetected) {
-            hideMessage();
-            handDetected = false;
-          }
+    function onResults(results) {
+      canvasCtx.save();
+      canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+      canvasCtx.drawImage(
+          results.image, 0, 0, canvasElement.width, canvasElement.height);
+      if (results.multiHandLandmarks) {
+        for (const landmarks of results.multiHandLandmarks) {
+          drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {color: '#00FF00', lineWidth: 5});
+          drawLandmarks(canvasCtx, landmarks, {color: '#FF0000', lineWidth: 2});
         }
-
-        requestAnimationFrame(() => runDetection(model, video));
-      });
+      }
+      canvasCtx.restore();
     }
 
-    function showMessage() {
-      document.getElementById('message').style.display = 'block';
-    }
-
-    function hideMessage() {
-      document.getElementById('message').style.display = 'none';
-    }
+    const camera = new Camera(videoElement, {
+      onFrame: async () => {
+        await hands.send({image: videoElement});
+      },
+      width: 1280,
+      height: 720
+    });
+    camera.start();
   </script>
 </body>
 </html>
