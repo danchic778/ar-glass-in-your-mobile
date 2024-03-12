@@ -29,7 +29,7 @@
 
 <script>
   // Запрашиваем доступ к основной камере телефона
-  navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
+  navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
     .then(function(stream) {
       var video = document.querySelector('#videoElement');
       video.srcObject = stream;
@@ -37,6 +37,16 @@
     })
     .catch(function(err) {
       console.log("An error occurred: " + err);
+      // Если основная камера недоступна, попробуйте фронтальную камеру
+      navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
+        .then(function(stream) {
+          var video = document.querySelector('#videoElement');
+          video.srcObject = stream;
+          video.play();
+        })
+        .catch(function(err) {
+          console.log("An error occurred: " + err);
+        });
     });
 </script>
 </body>
