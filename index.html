@@ -28,8 +28,8 @@
 <video autoplay muted id="videoElement"></video>
 
 <script>
-  // Запрашиваем доступ к камере
-  navigator.mediaDevices.getUserMedia({ video: true })
+  // Запрашиваем доступ к основной камере телефона
+  navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
     .then(function(stream) {
       var video = document.querySelector('#videoElement');
       video.srcObject = stream;
