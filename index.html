@@ -15,18 +15,17 @@
     display: flex;
     height: 100%;
   }
-  .split-screen .left,
-  .split-screen .right {
-    flex: 1;
-    overflow: auto;
-  }
   .split-screen .left {
+    flex: 1;
+    overflow: hidden;
     background: #f0f0f0;
   }
   .split-screen .right {
-    background: #e0e0e0;
+    flex: 1;
+    overflow: hidden;
+    background: transparent;
   }
-  .split-screen .left video {
+  .split-screen video {
     display: block;
     width: 100%;
     height: auto;
@@ -38,10 +37,7 @@
   <div class="left">
     <video autoplay muted id="videoElement"></video>
   </div>
-  <div class="right">
-    <!-- Дублируем содержимое левой половины -->
-    <div id="duplicateContent"></div>
-  </div>
+  <div class="right"></div>
 </div>
 
 <script>
@@ -51,10 +47,6 @@
       var video = document.querySelector('#videoElement');
       video.srcObject = stream;
       video.play();
-
-      // Дублируем содержимое левой половины в правую половину
-      var duplicateContent = document.querySelector('#duplicateContent');
-      duplicateContent.innerHTML = video.outerHTML;
     })
     .catch(function(err) {
       console.log("An error occurred: " + err);
